@@ -2,7 +2,7 @@ import {
   getAdjacentIndexByDirection,
   getIndexesByDirection,
   log,
-} from "../../gems.helpers.js";
+} from "../gems.helpers.js";
 
 const MIN_GEM_COLLECTION_LENGTH = 3;
 const COLLECTION_BONUS_FACTORS = [1, 1, 1.2, 1.5, 2];
