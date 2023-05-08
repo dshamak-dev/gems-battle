@@ -1,7 +1,7 @@
 const PACKAGES = {};
 
 export const loadPackage = async (packageId) => {
-  let pack = await fetch(`../packages/${packageId}.json`).then(res => res.json());
+  let pack = await fetch(`packages/${packageId}.json`).then(res => res.json());
 
   PACKAGES[packageId] = Object.assign({}, pack);
   console.info("Pack loaded", pack);
