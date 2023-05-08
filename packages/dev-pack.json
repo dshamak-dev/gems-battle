@@ -1,0 +1,39 @@
+{
+  "version": 0.1,
+  "id": "dev-pack",
+  "name": "Dev Pack",
+  "size": { "rows": 5, "cols": 4 },
+  "gems": [
+    {
+      "imageUrl": null,
+      "color": "#c6614a",
+      "id": 0
+    },
+    {
+      "imageUrl": null,
+      "color": "#4a8bc6",
+      "id": 1
+    },
+    {
+      "imageUrl": null,
+      "color": "#6c6b6b",
+      "id": 2
+    },
+    {
+      "imageUrl": null,
+      "color": "#4ac671",
+      "id": 3
+    }
+  ],
+  "turns": 30,
+  "character": {
+    "name": "Dev Support",
+    "level": -1,
+    "animations": null,
+    "gems": [
+      { "gemId": 0, "amount": 20 },
+      { "gemId": 1, "amount": 10 },
+      { "gemId": 3, "amount": 20 }
+    ]
+  }
+}
