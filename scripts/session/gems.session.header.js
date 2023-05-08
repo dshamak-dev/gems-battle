@@ -1,4 +1,4 @@
-import { formatNumberOutput, getRandom } from "/scripts/gems.helpers.js";
+import { formatNumberOutput } from "../../gems.helpers.js";
 
 export default class SessionHeader {
   el = null;

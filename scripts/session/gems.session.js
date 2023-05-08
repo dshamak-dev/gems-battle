@@ -1,8 +1,8 @@
-import SessionHeader from "/scripts/session/gems.session.header.js";
-import SessionGrid from "/scripts/session/gems.session.grid.js";
-import SessionFooter from "/scripts/session/gems.session.footer.js";
-import { loadPackage } from "/scripts/gems.package.js";
-import { generateId, log } from "/scripts/gems.helpers.js";
+import SessionHeader from "./gems.session.header.js";
+import SessionGrid from "./gems.session.grid.js";
+import SessionFooter from "./gems.session.footer.js";
+import { loadPackage } from "../gems.package.js";
+import { generateId, log } from "../gems.helpers.js";
 
 export const SESSION_WIDTH = 300;
 export const SESSION_HEIGHT = 800;

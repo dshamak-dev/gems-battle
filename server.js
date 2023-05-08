@@ -21,8 +21,6 @@ const types = {
 const root = path.normalize(path.resolve(__dirname, directoryName));
 
 const server = http.createServer((req, res) => {
-  console.log(`${req.method} ${req.url}`);
-
   const extension = path.extname(req.url).slice(1);
   const type = extension ? types[extension] : types.html;
   const supportedExtension = Boolean(type);
