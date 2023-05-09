@@ -24,6 +24,22 @@ main {
   cursor: pointer;
 }
 
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.02em;
+  line-height: 1;
+}
+.label:before {
+  content: attr(data-label);
+  font-size: 0.45em;
+  text-transform: uppercase;
+}
+.label:after {
+  content: attr(data-value);
+  font-weight: bold;
+}
+
 /* session START */
 .session {
   position: relative;
@@ -48,24 +64,10 @@ main {
   white-space: break-spaces;
   box-sizing: border-box;
 }
+
+.error,
 .session.overlay.error:after {
   color: salmon;
-}
-
-.session .label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.02em;
-  line-height: 1;
-}
-.session .label:before {
-  content: attr(data-label);
-  font-size: 0.45em;
-  text-transform: uppercase;
-}
-.session .label:after {
-  content: attr(data-value);
-  font-weight: bold;
 }
 
 .session .session_grid .session_grid_item {

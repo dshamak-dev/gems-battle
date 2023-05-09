@@ -121,3 +121,7 @@ export const getRandomArrayIndex = (arr) => {
 
   return Math.max(Math.min(arr.length - 1, randIndex), 0);
 };
+
+export const validateVersion = (a, b) => {
+  return Math.floor(a) === Math.floor(b);
+};

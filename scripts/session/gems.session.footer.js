@@ -35,7 +35,7 @@ export default class SessionHeader {
       style="
         font-size: 0.5em;
         color: rgba(255, 255, 255, 0.4);
-
+        text-shadow: 1px 2px 1px rgba(0, 0, 0, 0.3);
       "
     >#${this.session?.id || '***'}</div>`;
   }

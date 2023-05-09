@@ -32,7 +32,7 @@ export default class Session extends GameScreen {
   components = [];
   loading = false;
   experience = 0;
-  displayType = 'grid';
+  displayType = "grid";
 
   get turnsLeft() {
     return Math.max(0, this.maxTurns - this.turn);
@@ -59,7 +59,7 @@ export default class Session extends GameScreen {
     // this.el = document.createElement("div");
     this.el.classList.add("session");
     this.el.setAttribute("data-id", this.id);
-    this.el.style.setProperty('grid-template-rows', 'auto 1fr auto');
+    this.el.style.setProperty("grid-template-rows", "auto 1fr auto");
 
     this.show();
 
@@ -108,7 +108,6 @@ export default class Session extends GameScreen {
 
     if (isEndedState) {
       this.end();
-      // this.game.update();
     }
   }
 
@@ -170,18 +169,19 @@ export default class Session extends GameScreen {
   }
 
   set(updates = {}) {
-    let data = this.getSaveData();
+    let data = this.json();
 
     Object.assign(data, updates);
 
     // TODO: find a better solution for sync data
     this.applySavings(data);
 
-    this.save(data);
     this.update();
+
+    this.save(data);
   }
 
-  getSaveData() {
+  json() {
     const {
       id,
       createdAt,
@@ -209,16 +209,29 @@ export default class Session extends GameScreen {
   }
 
   save(data) {
-    this.game.saveSession(data);
+    this.game.save();
   }
 
   end() {
     // TODO: IF session was ended, skip and hide
     // TODO: apply experience to player stats and start new session
-    // this.set({ state: SESSION_STATE_TYPES.success });
+    // this.applyResults();
+
     this.hide();
     this.game.update();
-    //this.game.startSession();
+  }
+
+  applyResults() {
+    const pack = this.pack;
+    const player = this.game.player;
+    const isSuccess = this.state === SESSION_STATE_TYPES.success;
+
+    const results = pack.results[isSuccess ? "success" : "failure"];
+
+    player.set({ experience: player.experience + (results.experience || 0) });
+
+    this.game.update();
+    this.game.save();
   }
 
   update() {
@@ -232,16 +245,8 @@ export default class Session extends GameScreen {
 
   render(rootEl = this.game?.el) {
     super.render();
-    // log("Render Session");
+
     const el = this.el;
-
-    // if (el == null) {
-    //   return;
-    // }
-
-    // if (rootEl != null) {
-    //   rootEl.append(el);
-    // }
 
     const { visible, message, hint } = this.getOverlayInfo();
 
@@ -339,7 +344,16 @@ export default class Session extends GameScreen {
 
     this.validateSession();
 
-    this.update();
+    const isActiveMission = [
+      SESSION_STATE_TYPES.draft,
+      SESSION_STATE_TYPES.active,
+    ].includes(this.state);
+
+    if (!isActiveMission) {
+      this.applyResults();
+    } else {
+      this.update();
+    }
   }
 
   validateSession() {

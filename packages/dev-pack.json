@@ -35,5 +35,13 @@
       { "gemId": 1, "amount": 10 },
       { "gemId": 3, "amount": 20 }
     ]
+  },
+  "results": {
+    "success": {
+      "experience": 3
+    },
+    "failure": {
+      "experience": 0
+    }
   }
 }

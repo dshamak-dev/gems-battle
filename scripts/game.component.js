@@ -2,11 +2,22 @@ export default class GameComponent {
   children = [];
   el = null;
   parentEl = null;
+  tagType = "div";
+  observer;
+  className;
+  style;
 
   constructor(props = {}) {
     Object.assign(this, props);
 
-    this.el = document.createElement("div");
+    this.el = document.createElement(this.tagType);
+
+    if (this.className) {
+      this.el.classList.add(...this.className.split(" "));
+    }
+    if (this.style) {
+      this.el.setAttribute("style", this.style);
+    }
 
     this.update();
     this.render();
@@ -19,7 +30,11 @@ export default class GameComponent {
   render() {
     const parentEl = this.el.parent;
 
-    if (parentEl == null &&  this.parentEl == null) {
+    if (this.observer) {
+      this.el.innerHTML = this.observer();
+    }
+
+    if (parentEl == null && this.parentEl == null) {
       return;
     } else if (parentEl == null) {
       this.parentEl.append(this.el);
