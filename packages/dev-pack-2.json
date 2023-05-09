@@ -1,0 +1,50 @@
+{
+  "version": 0.1,
+  "id": "dev-pack-2",
+  "name": "Dev Pack 2",
+  "size": { "rows": 7, "cols": 5 },
+  "gems": [
+    {
+      "imageUrl": null,
+      "color": "#c6614a",
+      "id": 0
+    },
+    {
+      "imageUrl": null,
+      "color": "#4a8bc6",
+      "id": 1
+    },
+    {
+      "imageUrl": null,
+      "color": "#6c6b6b",
+      "id": 2
+    },
+    {
+      "imageUrl": null,
+      "color": "#4ac671",
+      "id": 3
+    },
+    {
+      "imageUrl": null,
+      "color": "#c64ab3",
+      "id": 4
+    },
+    {
+      "imageUrl": null,
+      "color": "#c6b74a",
+      "id": 5
+    }
+  ],
+  "turns": 40,
+  "character": {
+    "name": "Dev Support",
+    "level": -1,
+    "animations": null,
+    "gems": [
+      { "gemId": 0, "amount": 22 },
+      { "gemId": 1, "amount": 15 },
+      { "gemId": 3, "amount": 20 },
+      { "gemId": 4, "amount": 30 }
+    ]
+  }
+}

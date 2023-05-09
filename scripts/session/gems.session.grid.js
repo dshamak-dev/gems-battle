@@ -1,7 +1,6 @@
 import {
   getAdjacentIndexByDirection,
   getIndexesByDirection,
-  log,
 } from "../gems.helpers.js";
 
 const MIN_GEM_COLLECTION_LENGTH = 3;
@@ -59,6 +58,22 @@ export default class SessionGrid {
     // log("Create Session Grid", data);
     this.el = document.createElement("div");
     this.el.classList.add("session_grid");
+    this.el.setAttribute(
+      "style",
+      `
+        width: calc(100% - 2em);
+        height: fit-content;
+        self-align: center;
+        display: grid;
+        grid-template: repeat(${gridSize.rows}, auto) / repeat(${gridSize.cols}, 1fr);
+        gap: .2em;
+        padding: 0.25em;
+        border-radius: 0.5em;
+        box-sizing: border-box;
+        background-color: #D9D9D9;
+        margin: auto 1em;
+      `
+    );
   }
 
   update(session) {
@@ -73,7 +88,7 @@ export default class SessionGrid {
 
   render(parentEl) {
     // log("Render Session Grid");
-    const { rows, cols } = this.gridSize
+    const { cols } = this.gridSize
 
     const gems = this?.gems || [];
     const gridEl = this.el;
@@ -82,25 +97,12 @@ export default class SessionGrid {
     let fontSizeStyle = cssObj.getPropertyValue("font-size");
     let fontSize = Number(fontSizeStyle?.replace(/px/i)) || 0;
     let gapSize = fontSize * 0.2;
+    const spaceFactor = 0.9;
 
-    const freeWidth = parentEl?.innerWidth - (cols - 1) * gapSize;
+    const elRect = this.el?.getBoundingClientRect();
+    const freeWidth = (elRect?.width - (cols - 1) * gapSize * spaceFactor) || 0;
     const gridItemSize = Math.floor(freeWidth / cols);
-
-    this.el.setAttribute(
-      "style",
-      `
-        --grid-item-size: ${gridItemSize}px,
-        width: 100%;
-        display: grid;
-        grid-template: repeat(${rows}, auto) / repeat(${cols}, 1fr);
-        gap: .2em;
-        padding: 0.5em;
-        margin: 2em 1em 1em;
-        border-radius: 6%;
-        box-sizing: border-box;
-        background-color: #D9D9D9;
-      `
-    );
+    this.el.style.setProperty('--grid-item-size', `${gridItemSize}px`);
 
     let handler = this.triggerGem.bind(this);
 
@@ -111,6 +113,7 @@ export default class SessionGrid {
       el.classList.add("session_grid_item");
 
       el.classList.toggle("pointer", gem != null);
+      el.classList.toggle("empty", gem == null);
 
       el.setAttribute("style", ` --gem-color: ${gem?.color}; padding: 0.3em;`);
 
@@ -129,8 +132,6 @@ export default class SessionGrid {
 
     const gem = this.getGemAtIndex(startIndex);
 
-    log("Gem Click", startIndex, gem);
-
     if (gem == null) {
       return;
     }
@@ -139,12 +140,10 @@ export default class SessionGrid {
       this.findAllSameConnectedGemsFromIndex(startIndex);
     // Connections + target gem
     const collectionLength = gemsCollectionIndexes.length + 1;
-    log("gemsCollectionIndexes", gemsCollectionIndexes);
 
     if (collectionLength < MIN_GEM_COLLECTION_LENGTH) {
       // NOT VALID COLLECTION
       const adjacentIndexes = this.getAdjacentIndexes(startIndex);
-      log("NOT VALID COLLECTION", { adjacentIndexes });
 
       // DESTROY ACTIVE GEM
       this.destroyGemAtIndex(startIndex);
@@ -154,7 +153,6 @@ export default class SessionGrid {
     } else {
       // COLLECT COLLECTION
       this.collectGemsByIndexes([startIndex, ...gemsCollectionIndexes]);
-      log("COLLECT VALID COLLECTION");
     }
 
     this.save();

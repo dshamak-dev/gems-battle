@@ -1,10 +1,21 @@
+import GameScreen from "./scripts/game.screen.js";
+import { getRandomArrayItem } from "./scripts/gems.helpers.js";
+import MenuScreen from "./scripts/menu/menu.screen.js";
 import Session from "./scripts/session/gems.session.js";
 
 const GAME_STORAGE_KEY = "gems-battle_sessions";
+const GAME_VERSION = 0.1;
+const PACK_ID_LIST = ["dev-pack", "dev-pack-2"];
 
 class Game {
   el = null;
+  screens = [];
   sessions = [];
+  version = GAME_VERSION;
+
+  get activeMission() {
+    return this.sessions.find((it) => [null, 0].includes(it?.state));
+  }
 
   constructor() {
     this.el = document.getElementById("root");
@@ -14,18 +25,59 @@ class Game {
     if (sessionsData != null) {
       const sessionDataList = Object.values(sessionsData);
 
-      sessionDataList.forEach((sessionData) => this.startSession(sessionData));
+      sessionDataList.forEach((sessionData) => {
+        const isActive = [null, 0].includes(sessionData?.state)
+
+        if (!isActive) {
+          return;
+        }
+
+        this.startSession(sessionData);
+      });
     } else {
       // TODO: Add menu to start new Session
-      this.startNextSession();
+      // this.startNextSession();
     }
 
-    // console.info('Create Game');
+    const menuScreen = new MenuScreen({ parentEl: this.el, game: this });
+    menuScreen.show();
+
+    this.screens.push(menuScreen);
+
+    window.addEventListener("resize", this.render.bind(this));
+
+    this.render();
   }
 
-  startNextSession() {
+  getScreen(type) {
+    let instance = null;
+
+    switch (type) {
+      case "menu": {
+        instance = MenuScreen;
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    if (instance == null) {
+      return null;
+    }
+
+    return this.screens.find((s) => s instanceof instance);
+  }
+
+  startNextSession(targetPackId) {
+    const packId = targetPackId || getRandomArrayItem(PACK_ID_LIST);
+
+    if (packId == null) {
+      return;
+    }
+
     // TODO: Add menu to select next mission
-    this.startSession({ packId: "dev-pack" });
+    this.startSession({ packId });
   }
 
   startSession(data = null) {
@@ -37,21 +89,22 @@ class Game {
   }
 
   update() {
-    console.info("Update Game");
+    this.screens.forEach((screen) => screen.update());
 
     this.sessions.forEach((session) => session.update());
+
+    this.render();
   }
 
   render() {
     this.el.innerHTML = "";
-    console.info("Render Game");
 
-    const activeSession = this.sessions.find((it) =>
-      [null, 0].includes(it?.state)
-    );
+    this.screens.forEach((screen) => screen.render());
 
-    if (activeSession != null) {
-      activeSession.render(this.el);
+    const activeMission = this.activeMission;
+
+    if (activeMission != null) {
+      activeMission.render(this.el);
       return;
     }
 
@@ -91,4 +144,4 @@ class Game {
   }
 }
 
-const game = new Game();
+window.game = new Game();

@@ -20,7 +20,6 @@ export default class SessionHeader {
   }
 
   update(session) {
-    console.info("Update Session Footer", session);
 
     this.render();
   }

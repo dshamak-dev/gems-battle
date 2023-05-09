@@ -11,14 +11,13 @@ export default class SessionHeader {
     this.session = session;
     this.character = this.session?.pack?.character || null;
 
-    console.info("Create Session Header", data);
     this.el = document.createElement("div");
     this.el.classList.add("session_header");
     this.el.setAttribute(
       "style",
       `
         width: 100%;
-        min-height: calc(var(--root-height) * 0.10);
+        height: fit-content;
         display: grid;
         grid-template: 1fr / 1fr 1.5fr 1fr;
         padding: 0.4em;
@@ -64,13 +63,11 @@ export default class SessionHeader {
   }
 
   update(session) {
-    console.info("Update Session Header", session);
 
     this.render();
   }
 
   render(parentEl) {
-    console.info("Render Session Header");
     const el = this.el;
 
     if (parentEl != null) {
