@@ -125,3 +125,7 @@ export const getRandomArrayIndex = (arr) => {
 export const validateVersion = (a, b) => {
   return Math.floor(a) === Math.floor(b);
 };
+
+export const getGame = () => {
+  return window?.__context?.game;
+};

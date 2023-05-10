@@ -1,0 +1,47 @@
+{
+  "version": 0.1,
+  "id": "dev-pack-3",
+  "name": "Dev Pack 3",
+  "size": { "rows": 5, "cols": 5 },
+  "gems": [
+    {
+      "imageUrl": null,
+      "color": "white",
+      "id": 0
+    },
+    {
+      "imageUrl": null,
+      "color": "#c83838",
+      "id": 1
+    },
+    {
+      "imageUrl": null,
+      "color": "black",
+      "id": 2
+    },
+    {
+      "imageUrl": null,
+      "color": "#3099bb",
+      "id": 3
+    }
+  ],
+  "turns": 21,
+  "character": {
+    "name": "Dev Support",
+    "level": -1,
+    "animations": null,
+    "gems": [
+      { "gemId": 0, "amount": 13 },
+      { "gemId": 1, "amount": 13 },
+      { "gemId": 3, "amount": 6 }
+    ]
+  },
+  "results": {
+    "success": {
+      "experience": 4
+    },
+    "failure": {
+      "experience": -1
+    }
+  }
+}

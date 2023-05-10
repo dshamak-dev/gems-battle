@@ -5,7 +5,7 @@ import Session from "./session/gems.session.js";
 
 const GAME_STORAGE_KEY = "gems-battle_game";
 const GAME_VERSION = 0.1;
-const PACK_ID_LIST = ["dev-pack", "dev-pack-2"];
+const PACK_ID_LIST = ["dev-pack", "dev-pack-2", "dev-pack-3"];
 
 export default class Game {
   el = null;
@@ -16,7 +16,10 @@ export default class Game {
   player = null;
 
   get activeMission() {
-    return this.sessions.find((it) => [null, 0].includes(it?.state));
+    return (
+      this.sessions.find((it) => [null, 0].includes(it?.state)) ||
+      this.sessions.find((it) => it.visible)
+    );
   }
 
   constructor() {
@@ -27,8 +30,9 @@ export default class Game {
     const activeSessions = this.history.filter((it) =>
       [null, 0].includes(it?.state)
     );
+    const hasActiveSession = activeSessions.length > 0;
 
-    if (activeSessions.length > 0) {
+    if (hasActiveSession) {
       this.sessions = activeSessions.map((it) => new Session(this, it));
     }
 
@@ -36,27 +40,14 @@ export default class Game {
       this.player = new GamePlayer();
     }
 
-    // const sessionsData = this.getSessionsData();
+    const menuScreen = (this.menuScreen = new MenuScreen({
+      parentEl: this.el,
+      game: this,
+    }));
 
-    // if (sessionsData != null) {
-    //   const sessionDataList = Object.values(sessionsData);
-
-    //   sessionDataList.forEach((sessionData) => {
-    //     const isActive = [null, 0].includes(sessionData?.state);
-
-    //     if (!isActive) {
-    //       return;
-    //     }
-
-    //     this.startSession(sessionData);
-    //   });
-    // } else {
-    //   // TODO: Add menu to start new Session
-    //   // this.startNextSession();
-    // }
-
-    const menuScreen = new MenuScreen({ parentEl: this.el, game: this });
-    menuScreen.show();
+    if (!hasActiveSession) {
+      menuScreen.show();
+    }
 
     this.screens.push(menuScreen);
 
@@ -102,6 +93,10 @@ export default class Game {
     this.sessions.push(session);
 
     this.render();
+
+    if (this.menuScreen.visible) {
+      this.menuScreen.hide();
+    }
   }
 
   update() {

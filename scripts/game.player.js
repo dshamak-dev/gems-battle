@@ -29,7 +29,7 @@ export default class GamePlayer {
     );
   }
 
-  constructor({ cards, ...data }) {
+  constructor({ cards, ...data } = { cards: [] }) {
     Object.assign(this, { experience: 0 }, data || {});
 
     if (this.id == null) {

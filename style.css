@@ -40,6 +40,15 @@ main {
   font-weight: bold;
 }
 
+.menu-btn:before,
+.menu-btn:after {
+  content: "";
+  display: block;
+  width: 60%;
+  margin: 2px;
+  border-bottom: 1px solid white;
+}
+
 /* session START */
 .session {
   position: relative;

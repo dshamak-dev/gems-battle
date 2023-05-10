@@ -21,5 +21,11 @@ export default class MenuScreen extends GameScreen {
 
   render() {
     super.render();
+
+    const hasActiveSession = this.game?.activeMission != null;
+
+    if (!hasActiveSession && !this.visible) {
+      this.show();
+    }
   }
 }

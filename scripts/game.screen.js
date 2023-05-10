@@ -1,4 +1,5 @@
 import GameComponent from "./game.component.js";
+import GameNav from "./game.nav.js";
 
 const MIN_SCREEN_WIDTH = 375;
 const FULLSCREEN_WIDTH_BREAKPOINT = 720;
@@ -8,6 +9,7 @@ export default class GameScreen extends GameComponent {
   displayType = "block";
   layer = 1;
   visible = false;
+  nav;
 
   get screenWidth() {
     const isPortrait = screen.orientation?.type?.includes("portrait");
@@ -40,6 +42,8 @@ export default class GameScreen extends GameComponent {
       `
     );
 
+    this.nav = new GameNav({ parentEl: this.el });
+
     this.update();
     this.render();
   }
@@ -49,8 +53,9 @@ export default class GameScreen extends GameComponent {
   }
 
   render() {
+    const _self = this;
     const windowWidth = screen.width;
-    const isOverlayScreen = windowWidth < this.screenWidth * 2;
+    const isOverlayScreen = true; //windowWidth < this.screenWidth * 2;
 
     this.el.classList.toggle("visible", this.visible);
     this.el.style.setProperty(
@@ -60,7 +65,18 @@ export default class GameScreen extends GameComponent {
     this.el.style.display = this.visible ? this.displayType : "none";
     this.el.style.position = isOverlayScreen ? "absolute" : "relative";
 
+    
+    const hasNav = this.children.find(c => c === _self.nav);
+
+    if (this.nav != null && !hasNav) {
+      this.children.unshift(this.nav);
+    }
+
     super.render();
+
+    if (this.nav?.el != null) {
+      this.el.style.paddingTop = `${this.nav.el.getBoundingClientRect().height}px`;
+    }
   }
 
   show() {
