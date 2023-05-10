@@ -39,7 +39,11 @@ export const getIndexesByDirection = (
   gridSize,
   direction = "down"
 ) => {
-  let adjacentIndex = getAdjacentIndexByDirection(fromIndex, gridSize, direction);
+  let adjacentIndex = getAdjacentIndexByDirection(
+    fromIndex,
+    gridSize,
+    direction
+  );
 
   if (adjacentIndex !== -1) {
     return [
@@ -100,4 +104,28 @@ export const getAdjacentIndexByDirection = (
   }
 
   return nextIndex;
+};
+
+export const getRandomArrayItem = (arr) => {
+  const index = getRandomArrayIndex(arr);
+
+  return index === -1 ? null : arr[index];
+};
+
+export const getRandomArrayIndex = (arr) => {
+  if (arr == null || !Array.isArray(arr)) {
+    return -1;
+  }
+
+  let randIndex = getRandom(0, arr.length, true);
+
+  return Math.max(Math.min(arr.length - 1, randIndex), 0);
+};
+
+export const validateVersion = (a, b) => {
+  return Math.floor(a) === Math.floor(b);
+};
+
+export const getGame = () => {
+  return window?.__context?.game;
 };

@@ -3,6 +3,7 @@ import SessionGrid from "./gems.session.grid.js";
 import SessionFooter from "./gems.session.footer.js";
 import { loadPackage } from "../gems.package.js";
 import { generateId, log } from "../gems.helpers.js";
+import GameScreen from "../game.screen.js";
 
 export const SESSION_WIDTH = 300;
 export const SESSION_HEIGHT = 800;
@@ -16,10 +17,9 @@ const SESSION_STATE_TYPES = {
   fail: 2,
 };
 
-export default class Session {
+export default class Session extends GameScreen {
   id = null;
   state = SESSION_STATE_TYPES.draft;
-  containerEl = null;
   lastUpdate = null;
   history = [];
   version = null;
@@ -29,19 +29,22 @@ export default class Session {
   collection = {};
   gemIds = null;
   createdAt = null;
-  // components START
-  // header, grid, footer
   components = [];
   loading = false;
   experience = 0;
-  // components END
+  displayType = "grid";
 
   get turnsLeft() {
     return Math.max(0, this.maxTurns - this.turn);
   }
 
   constructor(game, data) {
+    super({ parentEl: game.el });
     this.reset();
+
+    if (data?.packId == null) {
+      return;
+    }
 
     this.id = data?.id || generateId();
     this.game = game;
@@ -53,22 +56,12 @@ export default class Session {
       this.set({ createdAt: Date.now() });
     }
 
-    this.containerEl = document.createElement("div");
-    this.containerEl.classList.add("session");
-    this.containerEl.setAttribute("data-id", this.id);
-    this.containerEl.setAttribute(
-      "style",
-      `
-        --root-width: calc((5 / 8) * 100vh * 0.9);
-        --root-height: calc(100vh * 0.9);
-        --root-font-size: calc(var(--root-width) * 0.08);
-        font-size: var(--root-font-size); 
-        width: var(--root-width);
-        height: var(--root-height);
-        display: grid;
-        grid-template-rows: auto auto 1fr;
-      `
-    );
+    // this.el = document.createElement("div");
+    this.el.classList.add("session");
+    this.el.setAttribute("data-id", this.id);
+    this.el.style.setProperty("grid-template-rows", "auto 1fr auto");
+
+    this.show();
 
     if (
       data == null ||
@@ -77,7 +70,7 @@ export default class Session {
       )
     ) {
       this.render();
-      return null;
+      return this;
     }
 
     const self = this;
@@ -88,6 +81,15 @@ export default class Session {
       .then((pack) => {
         self.loading = false;
         self.error = null;
+
+        // validate pack
+        const canUsePack =
+          Math.floor(pack?.version) === Math.floor(self.game.version);
+
+        if (!canUsePack) {
+          throw new Error(`Pack "${pack.name || data.packId}" can't be used.`);
+          return;
+        }
 
         self.initPack(Object.assign({ id: data.packId }, pack));
       })
@@ -105,7 +107,7 @@ export default class Session {
     ].includes(this.state);
 
     if (isEndedState) {
-      this.game.startNextSession();
+      this.end();
     }
   }
 
@@ -153,7 +155,7 @@ export default class Session {
     });
     const footer = new SessionFooter(this);
 
-    this.components.push(header, grid, footer);
+    this.children.push(header, grid, footer);
 
     const isValid = this.validateSession();
 
@@ -167,18 +169,19 @@ export default class Session {
   }
 
   set(updates = {}) {
-    let data = this.getSaveData();
+    let data = this.json();
 
     Object.assign(data, updates);
 
     // TODO: find a better solution for sync data
     this.applySavings(data);
 
-    this.save(data);
     this.update();
+
+    this.save(data);
   }
 
-  getSaveData() {
+  json() {
     const {
       id,
       createdAt,
@@ -206,41 +209,49 @@ export default class Session {
   }
 
   save(data) {
-    this.game.saveSession(data);
+    this.game.save();
   }
 
   end() {
     // TODO: IF session was ended, skip and hide
     // TODO: apply experience to player stats and start new session
-    this.set({ state: SESSION_STATE_TYPES.success });
-    //this.game.startSession();
+    // this.applyResults();
+
+    this.hide();
+    this.game.update();
+  }
+
+  applyResults() {
+    const pack = this.pack;
+    const player = this.game.player;
+    const isSuccess = this.state === SESSION_STATE_TYPES.success;
+
+    const results = pack.results[isSuccess ? "success" : "failure"];
+
+    player.set({ experience: player.experience + (results.experience || 0) });
+
+    this.game.update();
+    this.game.save();
   }
 
   update() {
     // log("Update Session");
     const _session = this;
 
-    this.components.forEach((c) => c?.update(_session));
+    this.children.forEach((c) => c?.update(_session));
 
     this.render();
   }
 
   render(rootEl = this.game?.el) {
-    // log("Render Session");
-    const el = this.containerEl;
+    super.render();
 
-    if (el == null) {
-      return;
-    }
-
-    if (rootEl != null) {
-      rootEl.append(el);
-    }
+    const el = this.el;
 
     const { visible, message, hint } = this.getOverlayInfo();
 
-    if (this.containerEl != null) {
-      this.containerEl.onclick = visible ? this.handleClick.bind(this) : null;
+    if (this.el != null) {
+      this.el.onclick = visible ? this.handleClick.bind(this) : null;
     }
 
     const overlayContent =
@@ -261,7 +272,7 @@ export default class Session {
       el.removeAttribute("data-overlay-content");
     }
 
-    this.components.forEach((c) => c?.render(el));
+    this.children.forEach((c) => c?.render(el));
   }
 
   getOverlayInfo() {
@@ -272,7 +283,12 @@ export default class Session {
         this.state
       );
     let message = visible ? this.getStateMesage() : null;
-    let hint = visible && !this.loading ? "Click to start next Mission" : null;
+    let hint = null;
+
+    if (visible && !this.loading) {
+      hint =
+        this.error != null ? "Click close" : "Click to close Mission screen";
+    }
 
     return { visible, message, hint };
   }
@@ -310,7 +326,6 @@ export default class Session {
   }
 
   collectGem(gem, expFactor = 1) {
-    log("Collect Gem", gem, expFactor);
     if (gem == null) {
       return;
     }
@@ -329,7 +344,16 @@ export default class Session {
 
     this.validateSession();
 
-    this.update();
+    const isActiveMission = [
+      SESSION_STATE_TYPES.draft,
+      SESSION_STATE_TYPES.active,
+    ].includes(this.state);
+
+    if (!isActiveMission) {
+      this.applyResults();
+    } else {
+      this.update();
+    }
   }
 
   validateSession() {

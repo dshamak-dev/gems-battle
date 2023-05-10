@@ -1,8 +1,8 @@
 {
   "version": 0.1,
-  "id": "dev-pack",
-  "name": "Dev Pack",
-  "size": { "rows": 5, "cols": 4 },
+  "id": "dev-pack-2",
+  "name": "Dev Pack 2",
+  "size": { "rows": 7, "cols": 5 },
   "gems": [
     {
       "imageUrl": null,
@@ -23,25 +23,36 @@
       "imageUrl": null,
       "color": "#4ac671",
       "id": 3
+    },
+    {
+      "imageUrl": null,
+      "color": "#c64ab3",
+      "id": 4
+    },
+    {
+      "imageUrl": null,
+      "color": "#c6b74a",
+      "id": 5
     }
   ],
-  "turns": 30,
+  "turns": 48,
   "character": {
     "name": "Dev Support",
     "level": -1,
     "animations": null,
     "gems": [
-      { "gemId": 0, "amount": 20 },
-      { "gemId": 1, "amount": 10 },
-      { "gemId": 3, "amount": 20 }
+      { "gemId": 0, "amount": 12 },
+      { "gemId": 1, "amount": 12 },
+      { "gemId": 3, "amount": 12 },
+      { "gemId": 4, "amount": 12 }
     ]
   },
   "results": {
     "success": {
-      "experience": 3
+      "experience": 5
     },
     "failure": {
-      "experience": 0
+      "experience": -2
     }
   }
 }

@@ -8,6 +8,10 @@ body {
   background-color: #e1e1e1;
 }
 
+body * {
+  box-sizing: border-box;
+}
+
 main {
   display: flex;
   align-items: center;
@@ -18,6 +22,31 @@ main {
 
 .pointer {
   cursor: pointer;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.02em;
+  line-height: 1;
+}
+.label:before {
+  content: attr(data-label);
+  font-size: 0.45em;
+  text-transform: uppercase;
+}
+.label:after {
+  content: attr(data-value);
+  font-weight: bold;
+}
+
+.menu-btn:before,
+.menu-btn:after {
+  content: "";
+  display: block;
+  width: 60%;
+  margin: 2px;
+  border-bottom: 1px solid white;
 }
 
 /* session START */
@@ -34,6 +63,7 @@ main {
   width: 100%;
   height: 100%;
   z-index: 1;
+  padding: 0.5em;
   background-color: #2a2a2a;
   color: white;
   display: flex;
@@ -41,25 +71,12 @@ main {
   align-items: center;
   text-align: center;
   white-space: break-spaces;
-}
-.session.overlay.error:after {
-  color: salmon;
+  box-sizing: border-box;
 }
 
-.session .label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.02em;
-  line-height: 1;
-}
-.session .label:before {
-  content: attr(data-label);
-  font-size: 0.45em;
-  text-transform: uppercase;
-}
-.session .label:after {
-  content: attr(data-value);
-  font-weight: bold;
+.error,
+.session.overlay.error:after {
+  color: salmon;
 }
 
 .session .session_grid .session_grid_item {
@@ -75,6 +92,17 @@ main {
   padding-bottom: 80%;
   border-radius: 100%;
   background-color: var(--gem-color);
+}
+.session .session_grid .session_grid_item:not(.empty):before {
+  box-shadow: 1px 2px 2px 0px rgba(0, 0, 0, 0.4);
+}
+.session .session_grid .session_grid_item:not(.empty):hover:before {
+  box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.4);
+}
+.session .session_grid .session_grid_item.empty:before {
+  /* box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.4); */
+  background-color: rgba(0, 0, 0, 0.02);
+  outline: 1px dashed rgba(0, 0, 0, 0.1);
 }
 /* session END */
 /* text START */
